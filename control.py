@@ -1,5 +1,8 @@
+from math import pi
+import numpy as np
+
+
 from constants import *
-import utils
 
 
 class Control:
@@ -41,3 +44,10 @@ class FPSControl(Control):
             self.target.phi -= self.target.turn_speed * dt
         if TURN_UP in actions:
             self.target.phi += self.target.turn_speed * dt
+        # Limit phi to be in the [pi/4, 3pi/4] range
+        self.target.phi = np.clip(self.target.phi, pi / 4, 3 * pi / 4)
+        # Keep theta between 0 and 2 pi
+        if self.target.theta > 2 * pi:
+            self.target.theta -= 2 * pi
+        if self.target.theta < 0:
+            self.target.theta += 2 * pi

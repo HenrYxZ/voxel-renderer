@@ -27,3 +27,17 @@ def get_actions(keys):
         if keys[key]:
             actions.add(action)
     return actions
+
+def wrap_repeat_coords(old_s, old_t, w, h):
+    # Ensure s and t are in ranges of the textures (wrap repeat)
+    s = old_s
+    t = old_t
+    while s < 0:
+        s += w
+    if s >= w:
+        s %= w
+    while t < 0:
+        t += h
+    if t >= h:
+        t %= h
+    return s, t

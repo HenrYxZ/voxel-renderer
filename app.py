@@ -27,7 +27,9 @@ class App(pyglet.window.Window):
         self.push_handlers(self.keys)
         height_img = Image.open("maps/D1.png")
         color_img = Image.open("maps/C1W.png").convert('RGB')
-        height_map = np.array(height_img, dtype=np.uint8)
+        height_map = (
+            np.array(height_img, dtype=np.uint8) / MAX_COLOR_VALUE
+        ) * TERRAIN_MAX_HEIGHT
         color_map = np.array(color_img, dtype=np.uint8)
         self.terrain = Terrain(height_map, color_map)
         self.renderer = Renderer(FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS)

@@ -28,13 +28,12 @@ class Renderer:
         )
         h, w = terrain.height_map.shape
         for i in range(self.screen_width):
-            current_angle_portion = camera.fov * i / self.screen_width
-            local_angle = abs(-camera.fov / 2 + current_angle_portion)
-            current_angle = (
-                camera.theta - camera.fov / 2 + current_angle_portion
-            )
+            current_angle_portion = camera.fov * (i / self.screen_width)
+            local_angle = -camera.fov / 2 + current_angle_portion
+            current_angle = camera.theta + local_angle
             ray_length = camera.z_far / cos(local_angle)
             direction = Vec2(cos(current_angle), sin(current_angle))
+            # The distance between each sample along the ray
             ray_delta = ray_length / camera.z_far
             max_projected_height = 0
             for j in range(1, int(camera.z_far)):
@@ -45,13 +44,17 @@ class Renderer:
                 )
                 height = terrain.height_map[t, s]
                 # Project the world height into window
-                proj_height = int(
-                    self.screen_height * (
-                        height / (camera.projection_scale * distance)
-                    )
+                proj_dist = j
+                proj_height = (height - camera.position.y) / proj_dist
+                # Project window height into screen height
+                proj_height = np.clip(
+                    proj_height, -camera.aperture, camera.aperture
                 )
-                if proj_height >= h:
-                    proj_height = h
+                proj_height = int(
+                    (
+                        proj_height / (2 * camera.aperture) + 0.5
+                    ) * (self.screen_height - 1)
+                )
                 if proj_height > max_projected_height:
                     color = terrain.color_map[t, s]
                     # Paint pixels from last max to new height

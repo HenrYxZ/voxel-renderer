@@ -52,12 +52,19 @@ class App(pyglet.window.Window):
 
     def on_draw(self, **kwargs):
         self.clear()
+
         # self.timer.start()
         render(self.frame, self.terrain, self.camera)
         # self.timer.stop()
         # print(self.timer)
+
         # self.frame = self.renderer.render_terrain(self.terrain, self.camera)
-        self.image_data.set_data("rgb", 3 * FRAME_WIDTH, self.frame.tobytes())
+
+        # self.timer.start()
+        self.image_data.set_data("RGB", 3 * FRAME_WIDTH, self.frame.tobytes())
         self.image_data.blit(0, 0)
+        # self.timer.stop()
+        # print(self.timer)
+
         # Debugging
         self.fps_display.draw()

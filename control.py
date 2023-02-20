@@ -20,6 +20,7 @@ class Control:
 
 class FPSControl(Control):
     def handle_actions(self, actions, dt):
+        print(self.target.direction)
         if MOVE_FORWARD in actions:
             self.target.position += (
                 self.target.direction * self.target.speed * dt
@@ -41,9 +42,9 @@ class FPSControl(Control):
         if TURN_RIGHT in actions:
             self.target.theta += self.target.turn_speed * dt
         if TURN_DOWN in actions:
-            self.target.phi -= self.target.turn_speed * dt
+            self.target.phi -= self.target.sensitivity * dt
         if TURN_UP in actions:
-            self.target.phi += self.target.turn_speed * dt
+            self.target.phi += self.target.sensitivity * dt
         # Limit phi to be in the [pi/4, 3pi/4] range
         self.target.phi = np.clip(self.target.phi, pi / 4, 3 * pi / 4)
         # Keep theta between 0 and 2 pi

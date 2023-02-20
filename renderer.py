@@ -57,7 +57,9 @@ class Renderer:
             max_projected_height = 0
             for j in range(1, int(camera.z_far)):
                 distance = j * ray_delta
-                current_pos = direction * distance
+                current_pos = direction * distance + Vec2(
+                    camera.position.x, camera.position.z
+                )
                 s, t = utils.wrap_repeat_coords(
                     int(current_pos.x), int(current_pos.y), w, h
                 )
@@ -113,13 +115,15 @@ class Renderer:
 def render(screen, terrain, camera):
     render_terrain_jit(
         screen, terrain.height_map, terrain.color_map, camera.position,
-        camera.theta, camera.z_far, camera.fov, camera.aperture
+        camera.theta, camera.z_far, camera.fov, camera.aperture,
+        camera.topdown
     )
 
 
 @njit
 def render_terrain_jit(
-    screen, height_map, color_map, position, theta, z_far, fov, aperture
+    screen, height_map, color_map, position, theta, z_far, fov, aperture,
+    cam_topdown
 ):
     screen_height, screen_width, _ = screen.shape
     h, w = height_map.shape
@@ -138,7 +142,7 @@ def render_terrain_jit(
         max_projected_height = 0
         for j in range(1, int(z_far)):
             distance = j * ray_delta
-            current_pos = direction * distance
+            current_pos = direction * distance + cam_topdown
             s, t = utils.wrap_repeat_coords(
                 int(current_pos[0]), int(current_pos[1]), w, h
             )

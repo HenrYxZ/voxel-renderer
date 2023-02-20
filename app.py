@@ -13,6 +13,10 @@ from terrain import Terrain
 import utils
 
 
+IMG_FORMAT = "RGB"
+PITCH = FRAME_WIDTH * COLOR_CHANNELS
+
+
 class App(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -44,13 +48,14 @@ class App(pyglet.window.Window):
         # Handle input with the camera control
         actions = utils.get_actions(self.keys)
         self.camera_control.handle_actions(actions, dt)
+        self.draw()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.P:
             print(self.camera.position)
         super(App, self).on_key_press(symbol, modifiers)
 
-    def on_draw(self, **kwargs):
+    def draw(self):
         self.clear()
 
         # self.timer.start()
@@ -61,7 +66,7 @@ class App(pyglet.window.Window):
         # self.frame = self.renderer.render_terrain(self.terrain, self.camera)
 
         # self.timer.start()
-        self.image_data.set_data("RGB", 3 * FRAME_WIDTH, self.frame.tobytes())
+        self.image_data.set_data(IMG_FORMAT, PITCH, self.frame.tobytes())
         self.image_data.blit(0, 0)
         # self.timer.stop()
         # print(self.timer)

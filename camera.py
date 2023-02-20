@@ -8,16 +8,17 @@ from constants import *
 class Camera:
     def __init__(
         self, position=np.array([512.0, 100.0, 512.0]), phi=pi/2, theta=pi/2,
-        z_far=600, fov=90.0, focus_distance=1.0, aperture=1.0
+        up=np.array([0.0, 1.0, 0.0]), z_far=600, fov=90.0, focus_distance=1.0,
+        aperture=1.0
     ):
         """
         Initialize a camera
 
         Args:
-            position (Vec3): The position in 3D space
+            position (ndarray): The position in 3D space
             phi (float): Angle of the camera in the x-axis given in rads
             theta (float): Angle of the camera in the y-axis given in rads
-            up (Vec3): Up vector in 3D space
+            up (ndarray): Up vector in 3D space
             z_far (float): Limit to where how far the camera can see in the
                 terrain in camera coordinates. z_far CANNOT be greater than the
                 texture size
@@ -30,7 +31,7 @@ class Camera:
         self.position = position
         self.phi = phi
         self.theta = theta
-        self.up = np.array([0.0, 1.0, 0.0])
+        self.up = up
         self.z_far = z_far
         self.fov = radians(fov)
         self.focus_distance = focus_distance
@@ -40,6 +41,7 @@ class Camera:
         self.speed = SPEED
         self.strife_speed = STRIFE_SPEED
         self.turn_speed = TURN_SPEED
+        self.sensitivity = SENSITIVITY
 
     @property
     def s(self):
@@ -47,7 +49,7 @@ class Camera:
 
     @property
     def t(self):
-        return self.position[1]
+        return self.position[2]
 
     @property
     def direction(self):
@@ -59,12 +61,14 @@ class Camera:
 
     @property
     def right(self):
-        return np.cross(self.up, self.direction)
+        return np.cross(self.direction, self.up)
 
-    def topdown_to_array(self):
+    @property
+    def topdown(self):
         """
         Get the top-down position of the camera to calculate terrain rendering
         and return it as a numpy 2D array.
+
         Returns:
             ndarray: 2D array with coordinates for terrain texture
         """

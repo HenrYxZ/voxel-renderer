@@ -51,11 +51,13 @@ class Camera:
 
     @property
     def direction(self):
-        return np.array([
-            sin(-self.phi) * cos(self.theta),
-            cos(-self.phi),
-            -sin(-self.phi) * sin(self.theta)
-        ])
+        return np.array(
+            [
+                sin(self.phi) * cos(self.theta),
+                cos(self.phi),
+                sin(self.phi) * sin(self.theta)
+            ]
+        )
 
     @property
     def right(self):

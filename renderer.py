@@ -69,11 +69,13 @@ class Renderer:
                 proj_height = (height - camera.position[1]) / proj_dist
                 # Project window height into screen height
                 proj_height = np.clip(
-                    proj_height, -camera.aperture, camera.aperture
+                    proj_height,
+                    -camera.window_height / 2,
+                    camera.window_height / 2
                 )
                 proj_height = int(
                     (
-                            proj_height / (2 * camera.aperture) + 0.5
+                        proj_height / camera.window_height + 0.5
                     ) * (self.screen_height - 1)
                 )
                 if proj_height > max_projected_height:
@@ -115,22 +117,22 @@ class Renderer:
 def render(screen, terrain, camera):
     render_terrain_jit(
         screen, terrain.height_map, terrain.color_map, camera.position,
-        camera.theta, camera.z_far, camera.fov, camera.aperture,
+        camera.theta, camera.z_far, camera.fov, camera.window_height,
         camera.topdown
     )
 
 
 @njit
 def render_terrain_jit(
-    screen, height_map, color_map, position, theta, z_far, fov, aperture,
+    screen, height_map, color_map, position, theta, z_far, fov, window_height,
     cam_topdown
 ):
     screen_height, screen_width, _ = screen.shape
     h, w = height_map.shape
-    # size = min(h, w)
+    size = min(h, w)
     # # Camera z_far cannot be greater than texture size!
-    # if z_far >= size:
-    #     z_far = size - 1
+    if z_far >= size:
+        z_far = size - 1
     for i in range(screen_width):
         current_angle_portion = fov * (i / screen_width)
         local_angle = -fov / 2 + current_angle_portion
@@ -151,10 +153,12 @@ def render_terrain_jit(
             proj_dist = j
             proj_height = (height - position[1]) / proj_dist
             # Project window height into screen height
-            proj_height = min(max(proj_height, -aperture), aperture)
+            proj_height = min(
+                max(proj_height, -window_height / 2), window_height / 2
+            )
             proj_height = int(
                 (
-                        proj_height / (2 * aperture) + 0.5
+                        proj_height / window_height + 0.5
                 ) * (screen_height - 1)
             )
             if proj_height > max_projected_height:

@@ -7,8 +7,8 @@ from constants import *
 
 class Camera:
     def __init__(
-        self, position=np.array([512.0, 70.0, 512.0]), phi=pi/2, theta=pi/2,
-        up=np.array([0.0, 1.0, 0.0]), z_far=600, fov=90.0, proj_dist=1.0,
+        self, position=np.array([512.0, 70.0, 512.0]), theta=pi/2,
+        z_far=600, fov=90.0, proj_dist=1.0,
         window_height=0.25, horizon=60.0
     ):
         """
@@ -16,9 +16,7 @@ class Camera:
 
         Args:
             position (ndarray): The position in 3D space
-            phi (float): Angle of the camera in the x-axis given in rads
             theta (float): Angle of the camera in the y-axis given in rads
-            up (ndarray): Up vector in 3D space
             z_far (float): Limit to where how far the camera can see in the
                 terrain in camera coordinates. z_far CANNOT be greater than the
                 texture size
@@ -29,9 +27,7 @@ class Camera:
                 projected image up or down
         """
         self.position = position
-        self.phi = phi
         self.theta = theta
-        self.up = up
         self.z_far = z_far
         self.fov = radians(fov)
         self.proj_dist = proj_dist
@@ -54,17 +50,13 @@ class Camera:
 
     @property
     def direction(self):
-        return np.array(
-            [
-                sin(self.phi) * cos(self.theta),
-                cos(self.phi),
-                sin(self.phi) * sin(self.theta)
-            ]
-        )
+        return np.array((cos(self.theta), 0.0, sin(self.theta)))
 
     @property
     def right(self):
-        return np.cross(self.direction, self.up)
+        return np.array(
+            (cos(self.theta + pi / 2.0), 0.0, sin(self.theta + pi / 2.0))
+        )
 
     @property
     def topdown(self):

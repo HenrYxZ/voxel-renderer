@@ -19,7 +19,9 @@ keys_mapping = {
     key.UP: TURN_UP,
     key.DOWN: TURN_DOWN,
     key.LEFT: TURN_LEFT,
-    key.RIGHT: TURN_RIGHT
+    key.RIGHT: TURN_RIGHT,
+    key.R: MOVE_UP,
+    key.F: MOVE_DOWN
 }
 # ----
 

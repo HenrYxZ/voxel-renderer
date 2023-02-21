@@ -7,15 +7,18 @@ from constants import *
 
 class Camera:
     def __init__(
-        self, position=np.array([512.0, 70.0, 512.0]), theta=pi/2,
-        z_far=600, fov=90.0, proj_dist=1.0,
-        window_height=0.25, horizon=60.0
+        self,
+        position=np.array([512.0, 70.0, 512.0]),
+        up=np.array([0.0, 1.0, 0.0]),
+        theta=pi/2, z_far=600, fov=90.0, proj_dist=1.0, window_height=0.25,
+        horizon=60.0
     ):
         """
         Initialize a camera
 
         Args:
             position (ndarray): The position in 3D space
+            up (ndarray): Unit vector representing the up direction in 3D space
             theta (float): Angle of the camera in the y-axis given in rads
             z_far (float): Limit to where how far the camera can see in the
                 terrain in camera coordinates. z_far CANNOT be greater than the
@@ -27,6 +30,7 @@ class Camera:
                 projected image up or down
         """
         self.position = position
+        self.up = up
         self.theta = theta
         self.z_far = z_far
         self.fov = radians(fov)
@@ -37,6 +41,7 @@ class Camera:
         # to change speed by applying a force for example
         self.speed = SPEED
         self.strife_speed = STRIFE_SPEED
+        self.vertical_speed = VERTICAL_SPEED
         self.turn_speed = TURN_SPEED
         self.sensitivity = SENSITIVITY
 

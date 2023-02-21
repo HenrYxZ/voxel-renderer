@@ -41,9 +41,17 @@ class FPSControl(Control):
         if TURN_RIGHT in actions:
             self.target.theta += self.target.turn_speed * dt
         if TURN_DOWN in actions:
-            self.target.horizon += 60 * dt
+            self.target.horizon += self.target.sensitivity * dt
         if TURN_UP in actions:
-            self.target.horizon -= 60 * dt
+            self.target.horizon -= self.target.sensitivity * dt
+        if MOVE_UP in actions:
+            self.target.position += (
+                self.target.up * self.target.vertical_speed * dt
+            )
+        if MOVE_DOWN in actions:
+            self.target.position -= (
+                self.target.up * self.target.vertical_speed * dt
+            )
 
         # Keep theta between 0 and 2 pi
         if self.target.theta > 2 * pi:

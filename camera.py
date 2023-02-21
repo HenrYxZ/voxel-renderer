@@ -7,9 +7,9 @@ from constants import *
 
 class Camera:
     def __init__(
-        self, position=np.array([512.0, 100.0, 512.0]), phi=pi/2, theta=pi/2,
+        self, position=np.array([512.0, 70.0, 512.0]), phi=pi/2, theta=pi/2,
         up=np.array([0.0, 1.0, 0.0]), z_far=600, fov=90.0, proj_dist=1.0,
-        window_height=1.0
+        window_height=0.25, horizon=60.0
     ):
         """
         Initialize a camera
@@ -25,6 +25,8 @@ class Camera:
             fov (float): Field of view given in degrees
             proj_dist (float): Distance from the camera to the projection window
             window_height (float): Height of the viewing window in world size
+            horizon (float): Offset height in pixels at which that scrolls the
+                projected image up or down
         """
         self.position = position
         self.phi = phi
@@ -34,6 +36,7 @@ class Camera:
         self.fov = radians(fov)
         self.proj_dist = proj_dist
         self.window_height = window_height
+        self.horizon = horizon
         # The idea on having this values as attributes is to eventually be able
         # to change speed by applying a force for example
         self.speed = SPEED

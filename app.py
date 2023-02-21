@@ -20,7 +20,8 @@ PITCH = FRAME_WIDTH * COLOR_CHANNELS
 class App(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            FRAME_WIDTH, FRAME_HEIGHT, caption="Voxel Renderer", *args, **kwargs
+            FRAME_WIDTH, FRAME_HEIGHT, caption="Voxel Renderer", vsync=False,
+            *args, **kwargs
         )
         self.keys = key.KeyStateHandler()
         self.frame = np.zeros(
@@ -53,13 +54,19 @@ class App(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.P:
             print(self.camera.position)
+        if symbol == key.R:
+            pyglet.image.get_buffer_manager().get_color_buffer().save(
+                'screenshot.png'
+            )
         super(App, self).on_key_press(symbol, modifiers)
 
     def draw(self):
         self.clear()
 
         # self.timer.start()
-        render(self.frame, self.terrain, self.camera)
+        self.frame = render(
+            FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain, self.camera
+        )
         # self.timer.stop()
         # print(self.timer)
 

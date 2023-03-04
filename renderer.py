@@ -14,7 +14,7 @@ def render(screen_width, screen_height, color_channels, terrain, camera):
     )
 
 
-@njit
+@njit(fastmath=True)
 def render_terrain_jit(
     screen_width, screen_height, color_channels, height_map,
     color_map, position, theta, z_far,

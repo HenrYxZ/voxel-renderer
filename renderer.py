@@ -10,7 +10,8 @@ def render(screen_width, screen_height, color_channels, terrain, camera):
     return render_terrain_jit(
         screen_width, screen_height, color_channels, terrain.height_map,
         terrain.color_map, camera.position, camera.theta, camera.z_far,
-        camera.fov, camera.window_height, camera.topdown, camera.horizon
+        camera.fov, camera.proj_dist, camera.proj_height, camera.topdown,
+        camera.horizon
     )
 
 
@@ -18,7 +19,7 @@ def render(screen_width, screen_height, color_channels, terrain, camera):
 def render_terrain_jit(
     screen_width, screen_height, color_channels, height_map,
     color_map, position, theta, z_far,
-    fov, window_height, cam_topdown, horizon
+    fov, proj_dist, proj_height, cam_topdown, horizon
 ):
     # Clear screen
     screen = np.zeros(
@@ -44,17 +45,14 @@ def render_terrain_jit(
             )
             height = height_map[t, s]
             # Project the world height into window
-            proj_dist = j
-            proj_height = (height - position[1]) / proj_dist
+            proj_h = (height - position[1]) * proj_dist / j
             # Project window height into screen height
-            proj_height = int(
-                (proj_height / window_height + 0.5) * (screen_height - 1)
-            )
-            proj_height += horizon
-            proj_height = int(min(max(proj_height, 0), screen_height - 1))
-            if proj_height > max_projected_height:
+            proj_h = (proj_h / proj_height) * screen_height
+            proj_h += horizon
+            proj_h = int(min(max(proj_h, 0), screen_height - 1))
+            if proj_h > max_projected_height:
                 color = color_map[t, s]
                 # Paint pixels from last max to new height
-                screen[max_projected_height:(proj_height + 1), i] = color
-                max_projected_height = proj_height
+                screen[max_projected_height:(proj_h + 1), i] = color
+                max_projected_height = proj_h
     return screen

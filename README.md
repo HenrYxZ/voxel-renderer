@@ -12,7 +12,6 @@ A voxel space renderer in Python with pyglet (Comanche style)
 
 ## To do:
 
-- Calibrate camera window size
 - Sky
 - Viewport
 - Fog

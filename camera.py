@@ -10,7 +10,7 @@ class Camera:
         self,
         position=np.array([512.0, 70.0, 512.0]),
         up=np.array([0.0, 1.0, 0.0]),
-        theta=pi/2, z_far=600, fov=90.0, proj_dist=1.0, window_height=0.25,
+        theta=pi/2, z_far=600, fov=90.0, proj_dist=1.0, proj_height=0.35,
         horizon=60.0
     ):
         """
@@ -24,8 +24,9 @@ class Camera:
                 terrain in camera coordinates. z_far CANNOT be greater than the
                 texture size
             fov (float): Field of view given in degrees
-            proj_dist (float): Distance from the camera to the projection window
-            window_height (float): Height of the viewing window in world size
+            proj_dist (float): Distance to the projection window
+            proj_height (float): Height of the viewing projection window in
+                world's units
             horizon (float): Offset height in pixels at which that scrolls the
                 projected image up or down
         """
@@ -35,7 +36,7 @@ class Camera:
         self.z_far = z_far
         self.fov = radians(fov)
         self.proj_dist = proj_dist
-        self.window_height = window_height
+        self.proj_height = proj_height
         self.horizon = horizon
         # The idea on having this values as attributes is to eventually be able
         # to change speed by applying a force for example

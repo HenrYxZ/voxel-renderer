@@ -55,7 +55,7 @@ class App(pyglet.window.Window):
             print(self.camera.position)
         if symbol == key.C:
             pyglet.image.get_buffer_manager().get_color_buffer().save(
-                'screenshot.png'
+                'docs/screenshot.png'
             )
         super(App, self).on_key_press(symbol, modifiers)
 

@@ -24,6 +24,7 @@ def render_terrain_jit(
     screen = np.zeros(
         (screen_height, screen_width, color_channels), dtype=np.uint8
     )
+    screen[::] = np.array((36, 36, 56), dtype=np.uint8)
     h, w = height_map.shape
     size = min(h, w)
     # # Camera z_far cannot be greater than texture size!

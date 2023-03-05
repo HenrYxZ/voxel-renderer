@@ -13,5 +13,4 @@ A voxel space renderer in Python with pyglet (Comanche style)
 ## To do:
 
 - Sky
-- Viewport
 - Fog

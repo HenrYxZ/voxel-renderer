@@ -3,10 +3,10 @@ FRAME_HEIGHT = 200
 COLOR_CHANNELS = 3
 SPEED = 50                   # Speed of the camera moving forward
 STRIFE_SPEED = 30            # Speed of the camera strife
-VERTICAL_SPEED = 25          # Speed of the camera moving up and down
-TURN_SPEED = 1            # Speed of the camera turning left and right
+VERTICAL_SPEED = 12          # Speed of the camera moving up and down
+TURN_SPEED = 0.25            # Speed of the camera turning left and right
 SENSITIVITY = 30            # Speed of the camera turning up and down
-TERRAIN_MAX_HEIGHT = 70     # Max height in the terrain in world units
+TERRAIN_MAX_HEIGHT = 150     # Max height in the terrain in world units
 MAX_COLOR_VALUE = 255
 
 # Input codes

@@ -8,10 +8,10 @@ from constants import *
 class Camera:
     def __init__(
         self,
-        position=np.array([512.0, 70.0, 512.0]),
+        position=np.array([512.0, 88.0, 512.0]),
         up=np.array([0.0, 1.0, 0.0]),
-        theta=pi/2, z_far=600, fov=90.0, proj_dist=1.0, proj_height=0.35,
-        horizon=60.0
+        theta=pi/2, z_far=1000, fov=90.0, proj_dist=1.0, proj_height=0.35,
+        horizon=143.0
     ):
         """
         Initialize a camera
@@ -74,3 +74,9 @@ class Camera:
             ndarray: 2D array with coordinates for terrain texture
         """
         return np.array([self.s, self.t])
+
+    def __str__(self):
+        str = ""
+        for attribute, value in self.__dict__.items():
+            str += f"{attribute}: {value}\n"
+        return str

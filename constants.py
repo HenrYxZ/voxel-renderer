@@ -8,6 +8,7 @@ TURN_SPEED = 0.25            # Speed of the camera turning left and right
 SENSITIVITY = 30            # Speed of the camera turning up and down
 TERRAIN_MAX_HEIGHT = 150     # Max height in the terrain in world units
 MAX_COLOR_VALUE = 255
+HORIZON = 143.0
 
 # Input codes
 MOVE_FORWARD = 0

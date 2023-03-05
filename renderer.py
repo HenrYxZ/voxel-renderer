@@ -3,13 +3,16 @@ from numba import njit
 import numpy as np
 
 
+from constants import *
 import utils
 
 
-def render(screen_width, screen_height, color_channels, terrain, camera):
+def render(
+    screen_width, screen_height, color_channels, terrain, camera, env_map
+):
     return render_terrain_jit(
         screen_width, screen_height, color_channels, terrain.height_map,
-        terrain.color_map, camera.position, camera.theta, camera.z_far,
+        terrain.color_map, env_map, camera.position, camera.theta, camera.z_far,
         camera.fov, camera.proj_dist, camera.proj_height, camera.topdown,
         camera.horizon
     )
@@ -18,14 +21,14 @@ def render(screen_width, screen_height, color_channels, terrain, camera):
 @njit(fastmath=True)
 def render_terrain_jit(
     screen_width, screen_height, color_channels, height_map,
-    color_map, position, theta, z_far,
+    color_map, env_map, position, theta, z_far,
     fov, proj_dist, proj_height, cam_topdown, horizon
 ):
     # Clear screen
     screen = np.zeros(
         (screen_height, screen_width, color_channels), dtype=np.uint8
     )
-    screen[::] = np.array((36, 36, 56), dtype=np.uint8)
+
     h, w = height_map.shape
     size = min(h, w)
     # # Camera z_far cannot be greater than texture size!
@@ -36,6 +39,13 @@ def render_terrain_jit(
         local_angle = -fov / 2 + current_angle_portion
         current_angle = theta + local_angle
         direction = np.array([cos(current_angle), sin(current_angle)])
+        # Use env map
+        for j in range(screen_height):
+            # Sample env map at (i, j)
+            v = (j + HORIZON - horizon)/ (2 * screen_height)
+            screen[j, i] = utils.sample_tex(
+                current_angle / np.pi, v, env_map
+            )
         # The distance between each sample along the ray
         max_projected_height = 0
         for j in range(1, int(z_far)):

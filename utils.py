@@ -1,4 +1,4 @@
-from numba import jit
+from numba import njit
 import numpy as np
 from pyglet.window import key
 import time
@@ -34,7 +34,7 @@ def get_actions(keys):
     return actions
 
 
-@jit(nopython=True)
+@njit(fastmath=True)
 def wrap_repeat_coords(old_s, old_t, w, h):
     # Ensure s and t are in ranges of the textures (wrap repeat)
     s = old_s
@@ -50,7 +50,17 @@ def wrap_repeat_coords(old_s, old_t, w, h):
     return s, t
 
 
-@jit(nopython=True)
+@njit(fastmath=True)
+def sample_tex(u, v, tex):
+    h, w, _ = tex.shape
+    if u > 1:
+        u -= 1
+    j = min(max(0, round(v * (h - 1))), h - 1)
+    i = round(u * (w - 1))
+    return tex[h - 1 - j, i]
+
+
+@njit
 def normalize(arr):
     """
     Normalize a vector using numpy.
@@ -63,6 +73,7 @@ def normalize(arr):
     if norm == 0:
         return arr
     return arr / norm
+
 
 def humanize_time(secs):
     minutes, secs = divmod(secs, 60)

@@ -37,10 +37,12 @@ class App(pyglet.window.Window):
         self.push_handlers(self.keys)
         height_img = Image.open("maps/D1.png")
         color_img = Image.open("maps/C1W.png").convert('RGB')
+        env_img = Image.open("maps/env.jpg")
         height_map = (
             np.array(height_img, dtype=np.uint8) / MAX_COLOR_VALUE
         ) * TERRAIN_MAX_HEIGHT
         color_map = np.array(color_img, dtype=np.uint8)
+        self.env_map = np.array(env_img, dtype=np.uint8)
         self.terrain = Terrain(height_map, color_map)
         self.timer = utils.Timer()
         self.fps_display = FPSDisplay(self)
@@ -55,7 +57,8 @@ class App(pyglet.window.Window):
         self.camera_control.handle_actions(actions, dt)
         # self.timer.start()
         self.frame = render(
-            FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain, self.camera
+            FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain,
+            self.camera, self.env_map
         )
         # self.timer.stop()
         # print(self.timer)
@@ -80,4 +83,4 @@ class App(pyglet.window.Window):
             # print(self.timer)
 
             # Debugging
-            # self.fps_display.draw()
+            self.fps_display.draw()

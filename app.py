@@ -47,17 +47,18 @@ class App(pyglet.window.Window):
         self.fixed_viewport = FixedResolution(
             self, FRAME_WIDTH, FRAME_HEIGHT + 2 * VERTICAL_PADDING
         )
+        self.set_mouse_visible(False)
 
     def on_update(self, dt):
         # Handle input with the camera control
         actions = utils.get_actions(self.keys)
         self.camera_control.handle_actions(actions, dt)
-        self.timer.start()
+        # self.timer.start()
         self.frame = render(
             FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain, self.camera
         )
-        self.timer.stop()
-        print(self.timer)
+        # self.timer.stop()
+        # print(self.timer)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.P:

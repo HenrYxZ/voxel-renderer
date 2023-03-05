@@ -8,6 +8,7 @@ from pyglet.window import key
 from camera import Camera
 from control import FPSControl
 from constants import *
+from fixed_resolution import FixedResolution
 from renderer import render
 from terrain import Terrain
 import utils
@@ -15,12 +16,13 @@ import utils
 
 IMG_FORMAT = "RGB"
 PITCH = FRAME_WIDTH * COLOR_CHANNELS
+VERTICAL_PADDING = 20
 
 
 class App(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            FRAME_WIDTH, FRAME_HEIGHT, caption="Voxel Renderer", vsync=False,
+            fullscreen=True, caption="Voxel Renderer", vsync=False,
             *args, **kwargs
         )
         self.keys = key.KeyStateHandler()
@@ -42,40 +44,39 @@ class App(pyglet.window.Window):
         self.terrain = Terrain(height_map, color_map)
         self.timer = utils.Timer()
         self.fps_display = FPSDisplay(self)
+        self.fixed_viewport = FixedResolution(
+            self, FRAME_WIDTH, FRAME_HEIGHT + 2 * VERTICAL_PADDING
+        )
 
     def on_update(self, dt):
         # Handle input with the camera control
         actions = utils.get_actions(self.keys)
         self.camera_control.handle_actions(actions, dt)
-
-        self.draw()
+        self.timer.start()
+        self.frame = render(
+            FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain, self.camera
+        )
+        self.timer.stop()
+        print(self.timer)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.P:
-            print(self.camera.position)
+            print(self.camera)
         if symbol == key.C:
             pyglet.image.get_buffer_manager().get_color_buffer().save(
                 'docs/screenshot.png'
             )
         super(App, self).on_key_press(symbol, modifiers)
 
-    def draw(self):
+    def on_draw(self, **kwargs):
         self.clear()
 
-        # self.timer.start()
-        self.frame = render(
-            FRAME_WIDTH, FRAME_HEIGHT, COLOR_CHANNELS, self.terrain, self.camera
-        )
-        # self.timer.stop()
-        # print(self.timer)
+        with self.fixed_viewport:
+            # self.timer.start()
+            self.image_data.set_data(IMG_FORMAT, PITCH, self.frame.tobytes())
+            self.image_data.blit(0, VERTICAL_PADDING)
+            # self.timer.stop()
+            # print(self.timer)
 
-        # self.frame = self.renderer.render_terrain(self.terrain, self.camera)
-
-        # self.timer.start()
-        self.image_data.set_data(IMG_FORMAT, PITCH, self.frame.tobytes())
-        self.image_data.blit(0, 0)
-        # self.timer.stop()
-        # print(self.timer)
-
-        # Debugging
-        self.fps_display.draw()
+            # Debugging
+            # self.fps_display.draw()

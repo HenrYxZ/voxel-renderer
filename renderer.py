@@ -3,16 +3,15 @@ from numba import njit
 import numpy as np
 
 
-from constants import *
 import utils
 
 
 def render(
-    screen_width, screen_height, color_channels, terrain, camera, env_map
+    screen_width, screen_height, color_channels, terrain, camera
 ):
     return render_terrain_jit(
         screen_width, screen_height, color_channels, terrain.height_map,
-        terrain.color_map, env_map, camera.position, camera.theta, camera.z_far,
+        terrain.color_map, camera.position, camera.theta, camera.z_far,
         camera.fov, camera.proj_dist, camera.proj_height, camera.topdown,
         camera.horizon
     )
@@ -21,13 +20,15 @@ def render(
 @njit(fastmath=True)
 def render_terrain_jit(
     screen_width, screen_height, color_channels, height_map,
-    color_map, env_map, position, theta, z_far,
+    color_map, position, theta, z_far,
     fov, proj_dist, proj_height, cam_topdown, horizon
 ):
     # Clear screen
-    screen = np.zeros(
+    screen = np.ones(
         (screen_height, screen_width, color_channels), dtype=np.uint8
     )
+    bg_color = np.array([154, 192, 238], dtype=np.uint8)
+    screen = screen * bg_color
 
     h, w = height_map.shape
     size = min(h, w)
@@ -39,13 +40,7 @@ def render_terrain_jit(
         local_angle = -fov / 2 + current_angle_portion
         current_angle = theta + local_angle
         direction = np.array([cos(current_angle), sin(current_angle)])
-        # Use env map
-        for j in range(screen_height):
-            # Sample env map at (i, j)
-            v = (j + HORIZON - horizon)/ (2 * screen_height)
-            screen[j, i] = utils.sample_tex(
-                current_angle / np.pi, v, env_map
-            )
+
         # The distance between each sample along the ray
         max_projected_height = 0
         for j in range(1, int(z_far)):
@@ -62,6 +57,14 @@ def render_terrain_jit(
             proj_h = int(min(max(proj_h, 0), screen_height - 1))
             if proj_h > max_projected_height:
                 color = color_map[t, s]
+                # For far away pixels add fog by interpolating with background
+                fog_start = 0.8 * z_far    # start fog at 80% of z_far
+                if j > fog_start:
+                    a = color.astype(np.float64) / 255.0
+                    b = bg_color.astype(np.float64) / 255.0
+                    t = (j - fog_start) / (z_far - fog_start)
+                    interp_col = utils.lerp(a, b, t) * 255.0
+                    color = interp_col.astype(np.uint8)
                 # Paint pixels from last max to new height
                 screen[max_projected_height:(proj_h + 1), i] = color
                 max_projected_height = proj_h

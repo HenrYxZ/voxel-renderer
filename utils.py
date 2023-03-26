@@ -75,6 +75,11 @@ def normalize(arr):
     return arr / norm
 
 
+@njit
+def lerp(a, b, t):
+    return (1 - t) * a + t * b
+
+
 def humanize_time(secs):
     minutes, secs = divmod(secs, 60)
     hours, minutes = divmod(minutes, 60)
